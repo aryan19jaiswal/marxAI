@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/marxai
+    username: marxai
+    password: marxai
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+minio:
+  url: http://localhost:9000
+  access-key: marxai
+  secret-key: marxai12345
+  bucket: marxai-documents
+
+qdrant:
+  host: localhost
+  rest-port: 6333
+  grpc-port: 6334
