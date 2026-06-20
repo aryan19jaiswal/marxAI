@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/marxai
-    username: marxai
-    password: marxai
+    url: jdbc:postgresql://localhost:5433/${POSTGRES_DB:marxai}
+    username: ${POSTGRES_USER:marxai}
+    password: ${POSTGRES_PASSWORD:marxai}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -18,8 +18,8 @@ spring:
 
 minio:
   url: http://localhost:9000
-  access-key: marxai
-  secret-key: marxai12345
+  access-key: ${MINIO_ROOT_USER:marxai}
+  secret-key: ${MINIO_ROOT_PASSWORD:marxai12345}
   bucket: marxai-documents
 
 qdrant:
