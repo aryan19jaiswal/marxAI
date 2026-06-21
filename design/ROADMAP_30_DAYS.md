@@ -65,13 +65,13 @@ gantt
 
 **Goal:** Full schema defined and versioned.
 
-- [ ] Add Flyway dependency, configure baseline migration
-- [ ] `V1__create_users.sql` — users table
-- [ ] `V2__create_sessions.sql` — sessions + conversations
-- [ ] `V3__create_documents.sql` — documents + chunks
-- [ ] `V4__create_progress.sql` — progress + study_plans
-- [ ] `V5__create_resume.sql` — resume table
-- [ ] Create all JPA entities + repositories
+- [x] Add Flyway dependency, configure baseline migration
+- [x] `V1__create_users.sql` — users table
+- [x] `V2__create_sessions.sql` — sessions + conversations
+- [x] `V3__create_documents.sql` — documents + chunks
+- [x] `V4__create_progress.sql` — progress + study_plans
+- [x] `V5__create_resume.sql` — resume table
+- [x] Create all JPA entities + repositories
 
 **Deliverable:** `mvn flyway:migrate` runs clean; entities map to tables
 
