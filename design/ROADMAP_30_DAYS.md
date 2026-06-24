@@ -81,12 +81,12 @@ gantt
 
 **Goal:** Secure REST API backbone working end-to-end.
 
-- [ ] `UserController` — register, login, profile
-- [ ] JWT auth with JJWT: `JwtService`, `JwtFilter`, `SecurityConfig`
-- [ ] `UserService` + BCrypt password hashing
-- [ ] Global exception handler (`@RestControllerAdvice`)
-- [ ] Basic DTOs with validation (`@Valid`)
-- [ ] Postman collection: register → login → get token → call protected endpoint
+- [x] `UserController` — register, login, profile
+- [x] JWT auth with JJWT: `JwtService`, `JwtFilter`, `SecurityConfig`
+- [x] `UserService` + BCrypt password hashing
+- [x] Global exception handler (`@RestControllerAdvice`)
+- [x] Basic DTOs with validation (`@Valid`)
+- [x] Postman collection: register → login → get token → call protected endpoint
 
 **Deliverable:** Auth flow working, JWT returned on login
 

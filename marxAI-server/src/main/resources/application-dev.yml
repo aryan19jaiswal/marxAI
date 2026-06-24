@@ -30,3 +30,7 @@ qdrant:
   host: localhost
   rest-port: 6333
   grpc-port: 6334
+
+jwt:
+  secret: ${JWT_SECRET:local-dev-secret-do-not-use-in-prod-please-change-1234567890}
+  expiration-ms: ${JWT_EXPIRATION_MS:86400000}
