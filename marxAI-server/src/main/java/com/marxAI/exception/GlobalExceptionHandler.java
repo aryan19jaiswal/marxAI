@@ -71,6 +71,12 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_REQUEST, "Unsupported File Type", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(DocumentParsingException.class)
+    public ResponseEntity<ErrorResponse> handleDocumentParsing(
+            DocumentParsingException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Document Parsing Failed", ex.getMessage(), request);
+    }
+
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceeded(
             MaxUploadSizeExceededException ex, HttpServletRequest request) {
