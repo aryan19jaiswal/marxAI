@@ -16,9 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Validates and persists a document upload: checks the file extension and {@code docType}, hands
- * the bytes to {@link StorageService}, then records the metadata row in PostgreSQL. Chunking and
- * embedding happen later in the ingestion pipeline (Day 9+); a freshly uploaded document is always
- * left in {@code PROCESSING} status.
+ * the bytes to {@link StorageService}, then records the metadata row in PostgreSQL. Once the
+ * metadata row is saved, parsing/chunking/embedding is handed off to {@link
+ * IngestionPipelineService} to run in the background, so a freshly uploaded document is returned
+ * in {@code PROCESSING} status without the caller waiting on it.
  */
 @Service
 @RequiredArgsConstructor
@@ -29,9 +30,11 @@ public class IngestionService {
     private final StorageService storageService;
     private final DocumentRepository documentRepository;
     private final UserRepository userRepository;
+    private final IngestionPipelineService ingestionPipelineService;
 
     /**
-     * Uploads {@code file} to MinIO and records it for {@code userId}.
+     * Uploads {@code file} to MinIO, records it for {@code userId}, then triggers background
+     * ingestion ({@link IngestionPipelineService#ingest(UUID)}).
      *
      * @param file the multipart file from the request
      * @param docType raw {@code docType} request parameter, validated against {@link DocumentType}
@@ -67,6 +70,7 @@ public class IngestionService {
             throw ex;
         }
 
+        ingestionPipelineService.ingest(saved.getId());
         return DocumentResponse.from(saved);
     }
 

@@ -18,6 +18,7 @@ repositories {
 }
 
 dependencies {
+	implementation(platform("dev.langchain4j:langchain4j-bom:1.9.1"))
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
@@ -31,6 +32,9 @@ dependencies {
 	implementation("org.apache.tika:tika-core:3.3.0")
 	implementation("org.apache.tika:tika-parsers-standard-package:3.3.0")
 	implementation("com.knuddels:jtokkit:1.1.0")
+	implementation("dev.langchain4j:langchain4j-core")
+	implementation("dev.langchain4j:langchain4j-open-ai")
+	implementation("dev.langchain4j:langchain4j-qdrant")
 	implementation("io.jsonwebtoken:jjwt-api:0.12.6")
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
 	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")

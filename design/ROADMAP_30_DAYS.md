@@ -46,16 +46,16 @@ gantt
 
 **Goal:** Working local dev environment with all services running.
 
-- [ ] Initialize Spring Boot project (Maven, Java 21, Spring Boot 3.3)
+- [x] Initialize Spring Boot project (Maven, Java 21, Spring Boot 3.3)
   - Dependencies: Spring Web, Spring Security, Spring Data JPA, Spring WebSocket, Validation, Actuator
-- [ ] Initialize Next.js project with TypeScript + Tailwind + shadcn/ui
-- [ ] Create `docker-compose.yml` with:
+- [x] Initialize Next.js project with TypeScript + Tailwind + shadcn/ui
+- [x] Create `docker-compose.yml` with:
   - PostgreSQL 16
   - Redis 7
   - Qdrant (latest)
   - MinIO
-- [ ] Configure `application-dev.yml` with datasource, Redis, MinIO endpoints
-- [ ] Verify all services healthy via Docker healthchecks
+- [x] Configure `application-dev.yml` with datasource, Redis, MinIO endpoints
+- [x] Verify all services healthy via Docker healthchecks
 
 **Deliverable:** `docker-compose up` → all services green
 
@@ -96,13 +96,13 @@ gantt
 
 **Goal:** Login/Register UI connected to backend.
 
-- [ ] Project structure: `app/`, `components/`, `store/`, `lib/`, `types/`
-- [ ] Axios client with JWT interceptor (auto-attach + 401 redirect)
-- [ ] Zustand `userStore` (auth state, token)
-- [ ] `/login` and `/register` pages with form validation
-- [ ] Protected route wrapper (redirect if no token)
-- [ ] Basic layout: sidebar + main content area
-- [ ] Dark mode toggle with Tailwind
+- [x] Project structure: `app/`, `components/`, `store/`, `lib/`, `types/`
+- [x] Axios client with JWT interceptor (auto-attach + 401 redirect)
+- [x] Zustand `userStore` (auth state, token)
+- [x] `/login` and `/register` pages with form validation
+- [x] Protected route wrapper (redirect if no token)
+- [x] Basic layout: sidebar + main content area
+- [x] Dark mode toggle with Tailwind
 
 **Deliverable:** Can register, login, and see a protected dashboard
 
@@ -114,12 +114,12 @@ gantt
 
 **Goal:** Files upload to MinIO and are tracked in DB.
 
-- [ ] Add MinIO Java SDK dependency
-- [ ] `MinioConfig.java` — configure MinIO client bean
-- [ ] `StorageService.java` — `uploadFile()`, `downloadFile()`, `getPresignedUrl()`
-- [ ] `DocumentController` — `POST /api/docs/upload` (multipart)
-- [ ] `IngestionService` — save metadata to PostgreSQL, return docId
-- [ ] File type validation (PDF, MD, TXT only)
+- [x] Add MinIO Java SDK dependency
+- [x] `MinioConfig.java` — configure MinIO client bean
+- [x] `StorageService.java` — `uploadFile()`, `downloadFile()`, `getPresignedUrl()`
+- [x] `DocumentController` — `POST /api/docs/upload` (multipart)
+- [x] `IngestionService` — save metadata to PostgreSQL, return docId
+- [x] File type validation (PDF, MD, TXT only)
 
 **Deliverable:** Upload PDF → stored in MinIO → record in PostgreSQL
 
@@ -129,13 +129,13 @@ gantt
 
 **Goal:** Extract text from PDFs and split into RAG-ready chunks.
 
-- [ ] Add Apache Tika dependency
-- [ ] `TikaDocumentParser.java` — extract text from PDF/DOCX/MD
-- [ ] `ChunkingService.java`:
+- [x] Add Apache Tika dependency
+- [x] `TikaDocumentParser.java` — extract text from PDF/DOCX/MD
+- [x] `ChunkingService.java`:
   - Token-aware splitting (512 tokens per chunk)
   - 50-token overlap between chunks
   - Metadata per chunk: `{docId, chunkIndex, pageNumber, topic}`
-- [ ] Unit tests for chunking edge cases (short docs, multi-page PDFs)
+- [x] Unit tests for chunking edge cases (short docs, multi-page PDFs)
 
 **Deliverable:** Given a PDF → list of `Chunk` objects with text + metadata
 
@@ -145,15 +145,15 @@ gantt
 
 **Goal:** Chunks embedded and stored; semantic search working.
 
-- [ ] Add LangChain4J + Qdrant dependency
-- [ ] `EmbeddingService.java` — call OpenAI embedding API (`text-embedding-3-small`)
-- [ ] `QdrantConfig.java` — configure `QdrantEmbeddingStore`
-- [ ] `QdrantService.java`:
+- [x] Add LangChain4J + Qdrant dependency
+- [x] `EmbeddingService.java` — call OpenAI embedding API (`text-embedding-3-small`)
+- [x] `QdrantConfig.java` — configure `QdrantEmbeddingStore`
+- [x] `QdrantService.java`:
   - `upsertChunks(List<Chunk>)` — embed + store with metadata
   - `similaritySearch(query, topK, filter)` — returns relevant chunks
   - `deleteByDocumentId(docId)` — cleanup on doc deletion
-- [ ] Wire `IngestionService`: upload → parse → chunk → embed → upsert
-- [ ] Async ingestion with `@Async` (don't block upload response)
+- [x] Wire `IngestionService`: upload → parse → chunk → embed → upsert
+- [x] Async ingestion with `@Async` (don't block upload response)
 
 **Deliverable:** Upload PDF → background ingestion → search Qdrant → relevant chunks returned
 

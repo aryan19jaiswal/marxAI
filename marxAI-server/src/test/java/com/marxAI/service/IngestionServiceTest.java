@@ -41,12 +41,16 @@ class IngestionServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private IngestionPipelineService ingestionPipelineService;
+
     private IngestionService ingestionService;
     private UUID userId;
 
     @BeforeEach
     void setUp() {
-        ingestionService = new IngestionService(storageService, documentRepository, userRepository);
+        ingestionService =
+                new IngestionService(storageService, documentRepository, userRepository, ingestionPipelineService);
         userId = UUID.randomUUID();
         // Not every test reaches the storage/persistence step (some fail validation first).
         lenient().when(userRepository.getReferenceById(userId)).thenReturn(User.builder().id(userId).build());
@@ -78,6 +82,8 @@ class IngestionServiceTest {
         assertThat(response.filename()).isEqualTo("notes.pdf");
         assertThat(response.docType()).isEqualTo("DSA");
         assertThat(response.status()).isEqualTo("PROCESSING");
+
+        verify(ingestionPipelineService).ingest(savedDoc.getValue().getId());
     }
 
     @ParameterizedTest
@@ -124,5 +130,6 @@ class IngestionServiceTest {
         ArgumentCaptor<String> deletedKey = ArgumentCaptor.forClass(String.class);
         verify(storageService).uploadFile(any(MultipartFile.class), deletedKey.capture());
         verify(storageService).deleteFile(deletedKey.getValue());
+        verify(ingestionPipelineService, never()).ingest(any());
     }
 }

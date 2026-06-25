@@ -30,6 +30,11 @@ qdrant:
   host: localhost
   rest-port: 6333
   grpc-port: 6334
+  collection-name: marxai-chunks
+
+openai:
+  api-key: ${OPENAI_API_KEY:}
+  embedding-model: text-embedding-3-small
 
 jwt:
   secret: ${JWT_SECRET:local-dev-secret-do-not-use-in-prod-please-change-1234567890}

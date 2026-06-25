@@ -91,6 +91,13 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.BAD_GATEWAY, "Storage Error", "Failed to communicate with file storage", request);
     }
 
+    @ExceptionHandler(VectorStoreException.class)
+    public ResponseEntity<ErrorResponse> handleVectorStoreException(
+            VectorStoreException ex, HttpServletRequest request) {
+        log.error("Vector store operation failed while processing {} {}", request.getMethod(), request.getRequestURI(), ex);
+        return build(HttpStatus.BAD_GATEWAY, "Vector Store Error", "Failed to communicate with the vector store", request);
+    }
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handleBadCredentials(
             BadCredentialsException ex, HttpServletRequest request) {
