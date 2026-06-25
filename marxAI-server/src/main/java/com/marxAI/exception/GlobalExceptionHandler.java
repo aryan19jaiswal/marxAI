@@ -15,6 +15,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 /** Translates exceptions thrown by controllers/services into a uniform {@link ErrorResponse} body. */
 @RestControllerAdvice
@@ -56,6 +57,32 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException ex, HttpServletRequest request) {
         return build(HttpStatus.NOT_FOUND, "User Not Found", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(InvalidDocumentTypeException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidDocumentType(
+            InvalidDocumentTypeException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Invalid Document Type", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(UnsupportedFileTypeException.class)
+    public ResponseEntity<ErrorResponse> handleUnsupportedFileType(
+            UnsupportedFileTypeException ex, HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Unsupported File Type", ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMaxUploadSizeExceeded(
+            MaxUploadSizeExceededException ex, HttpServletRequest request) {
+        return build(
+                HttpStatus.PAYLOAD_TOO_LARGE, "File Too Large", "Uploaded file exceeds the maximum allowed size",
+                request);
+    }
+
+    @ExceptionHandler(StorageException.class)
+    public ResponseEntity<ErrorResponse> handleStorageException(StorageException ex, HttpServletRequest request) {
+        log.error("Storage operation failed while processing {} {}", request.getMethod(), request.getRequestURI(), ex);
+        return build(HttpStatus.BAD_GATEWAY, "Storage Error", "Failed to communicate with file storage", request);
     }
 
     @ExceptionHandler(BadCredentialsException.class)

@@ -3,6 +3,11 @@ spring:
     name: marxAI-server
   profiles:
     active: dev
+  servlet:
+    multipart:
+      # Generous enough for scanned/multi-page PDFs while still bounding request size.
+      max-file-size: 20MB
+      max-request-size: 20MB
 
 management:
   endpoints:
