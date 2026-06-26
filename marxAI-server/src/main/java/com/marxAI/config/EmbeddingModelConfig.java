@@ -15,11 +15,17 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(GeminiProperties.class)
 public class EmbeddingModelConfig {
 
+    // gemini-embedding-001 natively outputs 3072 dimensions; we truncate to 768 to match the
+    // Qdrant collection that was already created at that size. The Gemini API supports this
+    // via Matryoshka Representation Learning (outputDimensionality in the request).
+    static final int OUTPUT_DIMENSIONS = 768;
+
     @Bean
     public EmbeddingModel embeddingModel(GeminiProperties properties) {
         return GoogleAiEmbeddingModel.builder()
                 .apiKey(properties.apiKey())
                 .modelName(properties.embeddingModel())
+                .outputDimensionality(OUTPUT_DIMENSIONS)
                 .build();
     }
 }

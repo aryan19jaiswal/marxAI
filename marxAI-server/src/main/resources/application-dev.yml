@@ -34,7 +34,9 @@ qdrant:
 
 gemini:
   api-key: ${GEMINI_API_KEY:}
-  embedding-model: text-embedding-004
+  # text-embedding-004 is unavailable on this key; gemini-embedding-001 is the available model.
+  # Its native output (3072 dims) is truncated to 768 in EmbeddingModelConfig via outputDimensionality.
+  embedding-model: gemini-embedding-001
   chat-model: gemini-2.0-flash
   chat-model-fast: gemini-2.0-flash-lite
 

@@ -23,7 +23,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/chat", label: "Chat", icon: NotebookPen, comingSoon: true },
-  { href: "/documents", label: "Documents", icon: FileText, comingSoon: true },
+  { href: "/documents", label: "Documents", icon: FileText },
   { href: "/mock-interview", label: "Mock Interview", icon: Mic, comingSoon: true },
   { href: "/study-plan", label: "Study Plan", icon: CalendarCheck, comingSoon: true },
 ];

@@ -180,11 +180,11 @@ gantt
 
 **Goal:** Users can upload, view, and manage their knowledge base.
 
-- [ ] `/documents` page with upload dropzone (react-dropzone)
-- [ ] Document list table: filename, type, status (Processing / Ready), upload date
-- [ ] Real-time status polling (TanStack Query, refetch every 3s while PROCESSING)
-- [ ] Delete document with confirmation modal
-- [ ] Toast notifications for upload success/failure
+- [x] `/documents` page with upload dropzone (react-dropzone)
+- [x] Document list table: filename, type, status (Processing / Ready), upload date
+- [x] Real-time status polling (TanStack Query, refetch every 3s while PROCESSING)
+- [x] Delete document with confirmation modal
+- [x] Toast notifications for upload success/failure
 
 **Deliverable:** Upload DSA notes PDF → see it appear as Ready → can search it
 

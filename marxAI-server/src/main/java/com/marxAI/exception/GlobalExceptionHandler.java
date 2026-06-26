@@ -59,6 +59,12 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.NOT_FOUND, "User Not Found", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(DocumentNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDocumentNotFound(
+            DocumentNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "Document Not Found", ex.getMessage(), request);
+    }
+
     @ExceptionHandler(InvalidDocumentTypeException.class)
     public ResponseEntity<ErrorResponse> handleInvalidDocumentType(
             InvalidDocumentTypeException ex, HttpServletRequest request) {

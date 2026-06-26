@@ -27,7 +27,11 @@ public class QdrantConfig {
 
     private static final Logger log = LoggerFactory.getLogger(QdrantConfig.class);
 
-    /** Output size of Gemini's {@code text-embedding-004}, the model {@code EmbeddingService} calls. */
+    /**
+     * Target vector size for the Qdrant collection. {@code gemini-embedding-001} natively outputs
+     * 3072 dimensions but is configured in {@code EmbeddingModelConfig} to truncate to 768 via
+     * Matryoshka {@code outputDimensionality}, so storage and search stay at this size.
+     */
     static final int EMBEDDING_DIMENSIONS = 768;
 
     @Bean(destroyMethod = "close")
