@@ -66,7 +66,7 @@ MarxAI solves this by combining RAG (your notes → relevant context), Agentic A
 | AI Orchestration | LangChain4J | 0.35.x | Native Java LLM framework, agent + tool support, RAG pipelines |
 | LLM | Claude claude-sonnet-4-6 (Anthropic) | Latest | Best reasoning + 200K context for long documents |
 | LLM Fast | Claude Haiku 4.5 | Latest | Classification, summarization, cheap tasks |
-| Embedding | text-embedding-3-small (OpenAI) | — | 1536-dim, fast, cost-effective |
+| Embedding | text-embedding-004 (Google Gemini) | — | 768-dim, fast, cost-effective |
 | ORM | Spring Data JPA + Hibernate | — | Type-safe DB access |
 | Migration | Flyway | — | Version-controlled DB migrations |
 | Security | Spring Security + JJWT | — | JWT-based stateless auth |
@@ -120,7 +120,7 @@ MarxAI solves this by combining RAG (your notes → relevant context), Agentic A
 | Service | Use Case |
 |---|---|
 | Anthropic API | Claude LLM calls |
-| OpenAI API | Embeddings only (text-embedding-3-small) |
+| Google Gemini API | Embeddings only (text-embedding-004) |
 | Judge0 | Code execution sandbox for coding problems |
 | Tavily / Serper | Web search tool for agents |
 

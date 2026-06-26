@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 /**
  * Wires the Qdrant gRPC client and the {@link EmbeddingStore} bean that {@code QdrantService}
  * reads/writes chunk vectors through. The collection backing the store is created on startup if
- * it doesn't already exist, sized for OpenAI's {@code text-embedding-3-small} (1536 dimensions)
+ * it doesn't already exist, sized for Gemini's {@code text-embedding-004} (768 dimensions)
  * with cosine distance.
  */
 @Configuration
@@ -27,8 +27,8 @@ public class QdrantConfig {
 
     private static final Logger log = LoggerFactory.getLogger(QdrantConfig.class);
 
-    /** Output size of OpenAI's {@code text-embedding-3-small}, the model {@code EmbeddingService} calls. */
-    static final int EMBEDDING_DIMENSIONS = 1536;
+    /** Output size of Gemini's {@code text-embedding-004}, the model {@code EmbeddingService} calls. */
+    static final int EMBEDDING_DIMENSIONS = 768;
 
     @Bean(destroyMethod = "close")
     public QdrantClient qdrantClient(QdrantProperties properties) {

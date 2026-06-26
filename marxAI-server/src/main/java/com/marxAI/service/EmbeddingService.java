@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
- * Thin wrapper around the {@link EmbeddingModel} bean (OpenAI {@code text-embedding-3-small}, see
+ * Thin wrapper around the {@link EmbeddingModel} bean (Gemini {@code text-embedding-004}, see
  * {@code EmbeddingModelConfig}), giving {@code QdrantService} a single place to call the
  * embedding API from.
  */

@@ -146,7 +146,7 @@ gantt
 **Goal:** Chunks embedded and stored; semantic search working.
 
 - [x] Add LangChain4J + Qdrant dependency
-- [x] `EmbeddingService.java` — call OpenAI embedding API (`text-embedding-3-small`)
+- [x] `EmbeddingService.java` — call Gemini embedding API (`text-embedding-004`)
 - [x] `QdrantConfig.java` — configure `QdrantEmbeddingStore`
 - [x] `QdrantService.java`:
   - `upsertChunks(List<Chunk>)` — embed + store with metadata
@@ -363,7 +363,7 @@ gantt
 - [ ] GitHub Actions CI: build → test → Docker build → push to registry
 - [ ] Deploy backend to Railway or AWS EC2
 - [ ] Deploy frontend to Vercel
-- [ ] Configure production secrets (Anthropic key, OpenAI key, DB URL)
+- [ ] Configure production secrets (Anthropic key, Gemini key, DB URL)
 - [ ] Set up Qdrant Cloud (or Qdrant on EC2)
 - [ ] Health check endpoint + basic monitoring
 

@@ -44,7 +44,7 @@ graph TB
         end
 
         subgraph RAG_IMPL["RAG Implementation"]
-            EMB_SVC["EmbeddingService<br/>(OpenAI/Voyage embeddings)"]
+            EMB_SVC["EmbeddingService<br/>(Gemini text-embedding-004)"]
             QDRANT_SVC["QdrantService<br/>- upsertVectors()<br/>- similaritySearch()<br/>- filterByMetadata()"]
             CHUNK_SVC["ChunkingService<br/>- splitByToken()<br/>- overlapChunking()"]
             CTX_SVC["ContextAssembler<br/>- rerank()<br/>- buildPromptContext()"]
@@ -261,7 +261,7 @@ sequenceDiagram
     CHUNK-->>IS: [chunk1, chunk2, ...]
     loop For each chunk
         IS->>EMB: embed(chunk.text)
-        EMB-->>IS: float[] vector (1536-dim)
+        EMB-->>IS: float[] vector (768-dim)
         IS->>QD: upsert(id, vector, payload={docId,topic,chunkIdx})
         IS->>PG: insertChunk(docId, qdrantId, chunkIdx)
     end

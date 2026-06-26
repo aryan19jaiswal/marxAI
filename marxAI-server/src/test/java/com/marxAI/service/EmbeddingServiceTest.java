@@ -17,7 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-/** Unit tests for {@link EmbeddingService}, with the OpenAI {@link EmbeddingModel} mocked. */
+/** Unit tests for {@link EmbeddingService}, with the Gemini {@link EmbeddingModel} mocked. */
 @ExtendWith(MockitoExtension.class)
 class EmbeddingServiceTest {
 
