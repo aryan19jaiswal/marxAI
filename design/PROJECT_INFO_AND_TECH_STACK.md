@@ -64,8 +64,8 @@ MarxAI solves this by combining RAG (your notes → relevant context), Agentic A
 |---|---|---|---|
 | Framework | Spring Boot | 3.3.x | Industry standard, strong ecosystem, fits Java interview prep domain |
 | AI Orchestration | LangChain4J | 0.35.x | Native Java LLM framework, agent + tool support, RAG pipelines |
-| LLM | Claude claude-sonnet-4-6 (Anthropic) | Latest | Best reasoning + 200K context for long documents |
-| LLM Fast | Claude Haiku 4.5 | Latest | Classification, summarization, cheap tasks |
+| LLM | Gemini `gemini-2.0-flash` (Google) | Latest | Strong reasoning, 1M token context, unified API with embeddings |
+| LLM Fast | Gemini `gemini-2.0-flash-lite` (Google) | Latest | Classification, summarization, cheap tasks |
 | Embedding | text-embedding-004 (Google Gemini) | — | 768-dim, fast, cost-effective |
 | ORM | Spring Data JPA + Hibernate | — | Type-safe DB access |
 | Migration | Flyway | — | Version-controlled DB migrations |
@@ -119,8 +119,7 @@ MarxAI solves this by combining RAG (your notes → relevant context), Agentic A
 
 | Service | Use Case |
 |---|---|
-| Anthropic API | Claude LLM calls |
-| Google Gemini API | Embeddings only (text-embedding-004) |
+| Google Gemini API | LLM calls + embeddings (text-embedding-004) — single API key for everything |
 | Judge0 | Code execution sandbox for coding problems |
 | Tavily / Serper | Web search tool for agents |
 

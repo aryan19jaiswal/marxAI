@@ -214,7 +214,7 @@ sequenceDiagram
     participant AG as SpecialistAgent
     participant TOOL as Tools
     participant VDB as Qdrant
-    participant LLM as Claude
+    participant LLM as Gemini
 
     CS->>PA: chat(userId, message, sessionId)
     PA->>CM: loadHistory(sessionId)

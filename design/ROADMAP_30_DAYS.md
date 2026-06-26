@@ -163,14 +163,14 @@ gantt
 
 **Goal:** Full RAG pipeline returns enriched context for LLM.
 
-- [ ] `ContextAssembler.java`:
+- [x] `ContextAssembler.java`:
   - Takes top-k chunks from Qdrant
   - Deduplicates by content hash
   - Formats into `### Source N:\n{chunk}` structure
   - Truncates to fit within context window
-- [ ] `EmbeddingStoreRetriever` from LangChain4J wired up
-- [ ] Add metadata filtering by `docType` (DSA / SystemDesign / Resume)
-- [ ] Integration test: query "binary search" → returns DSA note chunks
+- [x] `EmbeddingStoreRetriever` from LangChain4J wired up
+- [x] Add metadata filtering by `docType` (DSA / SystemDesign / Resume)
+- [x] Integration test: query "binary search" → returns DSA note chunks
 
 **Deliverable:** RAG retrieval returns ranked, formatted context ready for prompt injection
 
@@ -196,14 +196,14 @@ gantt
 
 **Goal:** Core agent infrastructure with intent routing working.
 
-- [ ] Add LangChain4J `langchain4j-anthropic` dependency
+- [ ] Add LangChain4J `langchain4j-google-ai-gemini` dependency (already in build)
 - [ ] `LangChainConfig.java`:
-  - `ChatLanguageModel` bean (Claude claude-sonnet-4-6, streaming)
-  - `ChatLanguageModel` fast bean (Claude Haiku)
+  - `ChatLanguageModel` bean (`gemini-2.0-flash`, streaming)
+  - `ChatLanguageModel` fast bean (`gemini-2.0-flash-lite`)
   - `MessageWindowChatMemory` factory
 - [ ] Define agent interface pattern (`AiServices.create()`)
 - [ ] `IntentClassifier.java`:
-  - Uses Claude Haiku
+  - Uses `gemini-2.0-flash-lite`
   - Returns `{intent, confidence, topic, difficulty, entities}`
   - Intent enum: `DSA | SYSTEM_DESIGN | RESUME | MOCK_INTERVIEW | STUDY_PLAN | GENERAL`
 - [ ] `PlannerAgent.java`:
@@ -308,7 +308,7 @@ gantt
 - [ ] `McpServer.java` — wraps existing `@Tool` beans into MCP tool schema
 - [ ] Tool manifest: `searchNotes`, `parseResume`, `generateQuestion`, `getUserProgress`, `webSearch`, `runCode`
 - [ ] MCP endpoint: `GET /mcp/tools` (list), `POST /mcp/tools/{name}` (invoke)
-- [ ] Test with MCP client (Claude Desktop or custom test harness)
+- [ ] Test with MCP client (custom test harness or compatible MCP inspector)
 
 **Deliverable:** All tools callable via standard MCP protocol
 
@@ -363,7 +363,7 @@ gantt
 - [ ] GitHub Actions CI: build → test → Docker build → push to registry
 - [ ] Deploy backend to Railway or AWS EC2
 - [ ] Deploy frontend to Vercel
-- [ ] Configure production secrets (Anthropic key, Gemini key, DB URL)
+- [ ] Configure production secrets (Gemini API key, DB URL)
 - [ ] Set up Qdrant Cloud (or Qdrant on EC2)
 - [ ] Health check endpoint + basic monitoring
 

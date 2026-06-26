@@ -32,7 +32,7 @@ graph TB
     end
 
     subgraph RAG["RAG Layer"]
-        EMB["Embedding Service<br/>(text-embedding-3-small)"]
+        EMB["Embedding Service<br/>(text-embedding-004)"]
         VDB["Vector Database<br/>(Qdrant)"]
         CHUNK["Document Chunker<br/>& Loader"]
     end
@@ -44,8 +44,8 @@ graph TB
     end
 
     subgraph LLM_LAYER["LLM Layer"]
-        CLAUDE["Claude claude-sonnet-4-6<br/>(Primary LLM)"]
-        FALLBACK["Claude Haiku<br/>(Fast / Cheap tasks)"]
+        CLAUDE["Gemini gemini-2.0-flash<br/>(Primary LLM)"]
+        FALLBACK["Gemini gemini-2.0-flash-lite<br/>(Fast / Cheap tasks)"]
     end
 
     subgraph MCP["MCP Tool Layer"]
@@ -107,7 +107,7 @@ sequenceDiagram
     participant PA as Planner Agent
     participant Agent as Specialist Agent
     participant RAG as RAG Layer
-    participant LLM as Claude LLM
+    participant LLM as Gemini LLM
 
     User->>UI: "Explain dynamic programming to me"
     UI->>GW: POST /chat {message, sessionId}
@@ -144,13 +144,14 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    IN["User Message"] --> CLS["Intent Classifier<br/>(Claude Haiku)"]
+    IN["User Message"] --> CLS["Intent Classifier<br/>(gemini-2.0-flash-lite)"]
     CLS --> |"DSA / algorithm / code"| DA["DSA Agent"]
     CLS --> |"system design / scalability"| SDA["System Design Agent"]
     CLS --> |"resume / feedback / ATS"| RA["Resume Agent"]
     CLS --> |"mock interview"| MIA["Mock Interview Agent"]
     CLS --> |"study plan / schedule"| SPA["Study Plan Agent"]
     CLS --> |"ambiguous"| PA["Planner asks clarifying Q"]
+
 ```
 
 ---
@@ -161,8 +162,8 @@ flowchart TD
 |---|---|---|
 | Orchestration | LangChain4J Planner Agent | Native Java, integrates with Spring Boot, supports tool calling |
 | Vector DB | Qdrant | Self-hostable, fast, supports metadata filtering |
-| LLM | Claude claude-sonnet-4-6 | Best reasoning, long context for documents |
-| Fast tasks | Claude Haiku | Classification & summarization at low cost |
+| LLM | Gemini `gemini-2.0-flash` | Best reasoning, long context for documents |
+| Fast tasks | Gemini `gemini-2.0-flash-lite` | Classification & summarization at low cost |
 | Streaming | WebSocket / SSE | Real-time chat UX |
 | Auth | JWT + Spring Security | Stateless, scalable |
 | Storage | MinIO (local) / S3 (prod) | Unified S3-compatible API |
