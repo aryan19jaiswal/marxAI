@@ -387,7 +387,7 @@ Each day, before ending:
 |---|---|
 | LangChain4J API changes | Pin exact version in pom.xml; check changelog before upgrading |
 | Qdrant embedding dimension mismatch | Set dimension once at collection creation; never change model mid-project |
-| Anthropic rate limits during testing | Use Claude Haiku for dev/test; Sonnet only for eval |
+| Gemini rate limits during testing | Use `gemini-2.0-flash-lite` for dev/test; `gemini-2.0-flash` only for eval |
 | Judge0 latency for code execution | Show "Running..." spinner; 10s timeout with user-friendly error |
 | Context window overflow on large PDFs | Chunk + truncate at `ContextAssembler`; max 5 chunks per query |
 | JWT secret in code | Use environment variable `JWT_SECRET`; never commit to git |

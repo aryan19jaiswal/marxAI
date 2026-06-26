@@ -133,7 +133,7 @@ flowchart LR
     A["User Uploads<br/>PDF / Markdown"] --> B["S3 / MinIO<br/>Raw Storage"]
     B --> C["Document Processor<br/>(Apache Tika + LangChain4J)"]
     C --> D["Text Chunker<br/>(512 tokens, 50 overlap)"]
-    D --> E["Embedding Model<br/>(text-embedding-3-small)"]
+    D --> E["Embedding Model<br/>(text-embedding-004)"]
     E --> F["Qdrant<br/>Vector DB"]
     F --> G["Metadata Index<br/>(PostgreSQL)"]
 ```

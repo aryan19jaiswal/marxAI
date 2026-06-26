@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 
 /**
  * Splits a {@link ParsedDocument} into token-bounded {@link TextChunk}s ready for embedding.
- * Chunks are sized against the {@code cl100k_base} encoding (the tokenizer used by OpenAI's
- * {@code text-embedding-3-small}, the model {@code EmbeddingService} calls), so a chunk's token
- * count maps directly to what the embedding model will actually see. Splitting happens per page so
+ * Chunks are sized against the {@code cl100k_base} encoding as a proxy token counter. Gemini's
+ * {@code text-embedding-004} tokenizer is not publicly exposed, but cl100k_base produces counts
+ * close enough for practical 512-token budget enforcement. Splitting happens per page so
  * a chunk never straddles two PDF pages, and consecutive chunks within a page overlap by
  * {@value #OVERLAP_TOKENS} tokens so context isn't lost at a chunk boundary.
  */
