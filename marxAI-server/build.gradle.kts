@@ -33,6 +33,9 @@ dependencies {
 	implementation("org.apache.tika:tika-parsers-standard-package:3.3.0")
 	implementation("com.knuddels:jtokkit:1.1.0")
 	implementation("dev.langchain4j:langchain4j-core")
+	// High-level AiServices API: AiServices.builder(), @SystemMessage, @UserMessage,
+	// @MemoryId, TokenStream, MessageWindowChatMemory — not included in langchain4j-core.
+	implementation("dev.langchain4j:langchain4j")
 	implementation("dev.langchain4j:langchain4j-google-ai-gemini")
 	implementation("dev.langchain4j:langchain4j-qdrant")
 	implementation("io.jsonwebtoken:jjwt-api:0.12.6")

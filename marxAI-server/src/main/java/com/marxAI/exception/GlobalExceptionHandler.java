@@ -1,6 +1,7 @@
 package com.marxAI.exception;
 
 import com.marxAI.model.dto.ErrorResponse;
+import dev.langchain4j.exception.RateLimitException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,6 +66,12 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.NOT_FOUND, "Document Not Found", ex.getMessage(), request);
     }
 
+    @ExceptionHandler(SessionNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSessionNotFound(
+            SessionNotFoundException ex, HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "Session Not Found", ex.getMessage(), request);
+    }
+
     @ExceptionHandler(InvalidDocumentTypeException.class)
     public ResponseEntity<ErrorResponse> handleInvalidDocumentType(
             InvalidDocumentTypeException ex, HttpServletRequest request) {
@@ -102,6 +109,13 @@ public class GlobalExceptionHandler {
             VectorStoreException ex, HttpServletRequest request) {
         log.error("Vector store operation failed while processing {} {}", request.getMethod(), request.getRequestURI(), ex);
         return build(HttpStatus.BAD_GATEWAY, "Vector Store Error", "Failed to communicate with the vector store", request);
+    }
+
+    @ExceptionHandler(RateLimitException.class)
+    public ResponseEntity<ErrorResponse> handleRateLimit(RateLimitException ex, HttpServletRequest request) {
+        log.warn("Gemini API rate limit hit for {} {}", request.getMethod(), request.getRequestURI());
+        return build(HttpStatus.TOO_MANY_REQUESTS, "Rate Limit Exceeded",
+                "The AI service is temporarily unavailable due to rate limiting. Please try again shortly.", request);
     }
 
     @ExceptionHandler(BadCredentialsException.class)

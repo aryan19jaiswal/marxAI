@@ -196,20 +196,23 @@ gantt
 
 **Goal:** Core agent infrastructure with intent routing working.
 
-- [ ] Add LangChain4J `langchain4j-google-ai-gemini` dependency (already in build)
-- [ ] `LangChainConfig.java`:
-  - `ChatLanguageModel` bean (`gemini-2.0-flash`, streaming)
-  - `ChatLanguageModel` fast bean (`gemini-2.0-flash-lite`)
-  - `MessageWindowChatMemory` factory
-- [ ] Define agent interface pattern (`AiServices.create()`)
-- [ ] `IntentClassifier.java`:
+- [x] Add LangChain4J `langchain4j` dependency (AiServices, MessageWindowChatMemory)
+- [x] `LangChainConfig.java`:
+  - `ChatModel` bean (`gemini-2.0-flash`, primary)
+  - `ChatModel` fast bean (`gemini-2.0-flash-lite`, @Qualifier("fast"))
+  - `StreamingChatModel` bean for SSE
+  - `MessageWindowChatMemory` via `chatMemoryProvider` (20-message window per session)
+- [x] Define agent interface pattern (`AiServices.builder().chatModel().build()`)
+- [x] `IntentClassifier.java`:
   - Uses `gemini-2.0-flash-lite`
-  - Returns `{intent, confidence, topic, difficulty, entities}`
-  - Intent enum: `DSA | SYSTEM_DESIGN | RESUME | MOCK_INTERVIEW | STUDY_PLAN | GENERAL`
-- [ ] `PlannerAgent.java`:
-  - Injects memory, user context, intent
-  - Routes to specialist agent
-  - `ChatService` orchestrates the full call
+  - Returns `IntentClassificationResult{intent, confidence, topic, difficulty, entities}`
+  - `AgentIntent` enum: `DSA | SYSTEM_DESIGN | RESUME | MOCK_INTERVIEW | STUDY_PLAN | GENERAL`
+- [x] `PlannerAgent.java`:
+  - `@MemoryId`-scoped per-session `MessageWindowChatMemory`
+  - `@SystemMessage` general coaching prompt at interface level
+  - `chat()` (blocking) and `streamChat()` (SSE via `TokenStream`)
+- [x] `ChatService.java` orchestrates: session resolve/create → intent classify → RAG retrieve → planner call → persist turns
+- [x] `ChatController.java`: `POST /api/chat` (blocking) and `POST /api/chat/stream` (SSE)
 
 **Deliverable:** Message "explain binary trees" → classified as DSA → routed correctly
 
