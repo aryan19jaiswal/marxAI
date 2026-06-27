@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/${POSTGRES_DB:marxai}
-    username: ${POSTGRES_USER:marxai}
-    password: ${POSTGRES_PASSWORD:marxai}
+    url: jdbc:postgresql://localhost:5433/marxai
+    username: marxai
+    password: marxai
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -22,8 +22,8 @@ spring:
 
 minio:
   url: http://localhost:9000
-  access-key: ${MINIO_ROOT_USER:marxai}
-  secret-key: ${MINIO_ROOT_PASSWORD:marxai12345}
+  access-key: marxai
+  secret-key: marxai12345
   bucket: marxai-documents
 
 qdrant:
@@ -33,13 +33,11 @@ qdrant:
   collection-name: marxai-chunks
 
 gemini:
-  api-key: ${GEMINI_API_KEY:}
-  # text-embedding-004 is unavailable on this key; gemini-embedding-001 is the available model.
-  # Its native output (3072 dims) is truncated to 768 in EmbeddingModelConfig via outputDimensionality.
+  api-key: YOUR_GEMINI_API_KEY
   embedding-model: gemini-embedding-001
   chat-model: gemini-2.0-flash
   chat-model-fast: gemini-2.0-flash-lite
 
 jwt:
-  secret: ${JWT_SECRET:local-dev-secret-do-not-use-in-prod-please-change-1234567890}
-  expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+  secret: change-me-to-a-long-random-secret-of-at-least-32-characters
+  expiration-ms: 86400000
