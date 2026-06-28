@@ -1,5 +1,6 @@
 package com.marxAI.service;
 
+import com.marxAI.agent.DsaAgent;
 import com.marxAI.agent.IntentClassifier;
 import com.marxAI.agent.PlannerAgent;
 import com.marxAI.exception.SessionNotFoundException;
@@ -32,10 +33,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
  *   <li>Classify the user's message via {@link IntentClassifier} using the fast model.</li>
  *   <li>Retrieve relevant RAG context from Qdrant, scoped by the intent's {@link DocumentType}.</li>
  *   <li>Prepend the RAG context block to the user message when chunks are available.</li>
- *   <li>Delegate to {@link PlannerAgent} — blocking via {@code chat()} or streaming via
- *       {@code streamChat()} → {@link TokenStream}.</li>
- *   <li>Persist both the user turn and assistant turn to the {@code conversations} table for
- *       history display and future memory replay.</li>
+ *   <li>Route to the appropriate specialist agent based on intent:
+ *       {@link DsaAgent} for {@code DSA}, {@link PlannerAgent} for all other intents.</li>
+ *   <li>Persist both the user turn and assistant turn to the {@code conversations} table.</li>
  * </ol>
  */
 @Service
@@ -57,6 +57,7 @@ public class ChatService {
 
     private final IntentClassifier intentClassifier;
     private final PlannerAgent plannerAgent;
+    private final DsaAgent dsaAgent;
     private final RetrievalService retrievalService;
     private final SessionRepository sessionRepository;
     private final ConversationRepository conversationRepository;
@@ -78,7 +79,8 @@ public class ChatService {
         String formattedMessage = buildPromptMessage(request.message(), context);
         persistConversationTurn(session, ROLE_USER, request.message());
 
-        String response = plannerAgent.chat(session.getId().toString(), formattedMessage);
+        String response = routeBlocking(
+                intentResult.intent(), session.getId().toString(), formattedMessage);
 
         persistConversationTurn(session, ROLE_ASSISTANT, response);
         return new ChatResponse(
@@ -101,8 +103,8 @@ public class ChatService {
         StreamSetup setup = initStreamSetup(userId, request);
 
         StringBuilder fullResponse = new StringBuilder();
-        TokenStream tokenStream =
-                plannerAgent.streamChat(setup.sessionId(), setup.formattedMessage());
+        TokenStream tokenStream = routeStreaming(
+                setup.intentResult().intent(), setup.sessionId(), setup.formattedMessage());
 
         tokenStream
                 .onPartialResponse(token -> {
@@ -188,9 +190,25 @@ public class ChatService {
                 .build());
     }
 
-    // ---------------------------------------------------------------------------
-    // Internal value type
-    // ---------------------------------------------------------------------------
+    /**
+     * Routes a blocking chat call to {@link DsaAgent} for DSA intents or
+     * {@link PlannerAgent} for everything else.
+     */
+    private String routeBlocking(AgentIntent intent, String sessionId, String message) {
+        return intent == AgentIntent.DSA
+                ? dsaAgent.chat(sessionId, message)
+                : plannerAgent.chat(sessionId, message);
+    }
+
+    /**
+     * Routes a streaming chat call to {@link DsaAgent} for DSA intents or
+     * {@link PlannerAgent} for everything else.
+     */
+    private TokenStream routeStreaming(AgentIntent intent, String sessionId, String message) {
+        return intent == AgentIntent.DSA
+                ? dsaAgent.streamChat(sessionId, message)
+                : plannerAgent.streamChat(sessionId, message);
+    }
 
     /**
      * Lightweight context record passed from the transactional setup phase to the async

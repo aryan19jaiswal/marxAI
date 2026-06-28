@@ -41,3 +41,10 @@ gemini:
 jwt:
   secret: change-me-to-a-long-random-secret-of-at-least-32-characters
   expiration-ms: 86400000
+
+# Day 17-18: Judge0 code execution (via RapidAPI)
+# Sign up at https://rapidapi.com/judge0-official/api/judge0-ce and get your API key.
+judge0:
+  base-url: https://judge0-ce.p.rapidapi.com
+  api-key: YOUR_JUDGE0_RAPIDAPI_KEY
+  timeout-seconds: 15

@@ -1,7 +1,11 @@
 package com.marxAI.config;
 
+import com.marxAI.agent.DsaAgent;
 import com.marxAI.agent.IntentClassifier;
 import com.marxAI.agent.PlannerAgent;
+import com.marxAI.agent.tool.CodeRunnerTool;
+import com.marxAI.agent.tool.NoteSearchTool;
+import com.marxAI.agent.tool.QuestionGeneratorTool;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.chat.StreamingChatModel;
@@ -15,16 +19,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
 /**
- * Registers all LangChain4J beans needed for Day 15-16 agent infrastructure:
- * two {@link ChatLanguageModel}s (main reasoning model + fast classifier model),
- * one {@link StreamingChatLanguageModel} for SSE, and the two AiServices-backed agents.
+ * Registers all LangChain4J beans: two {@link ChatModel}s (primary + fast classifier),
+ * one {@link StreamingChatModel} for SSE, and the AiServices-backed agents.
  *
  * <p>Model assignments:
  * <ul>
- *   <li>{@code gemini-2.0-flash} — primary model for the {@link PlannerAgent}; high-quality
- *       multi-turn coaching responses.</li>
- *   <li>{@code gemini-2.0-flash-lite} — fast, low-cost model for the {@link IntentClassifier};
- *       runs on every message so latency and token cost matter more than output quality.</li>
+ *   <li>{@code gemini-2.0-flash} — primary model for {@link PlannerAgent} and {@link DsaAgent}.</li>
+ *   <li>{@code gemini-2.0-flash-lite} — fast, low-cost model for {@link IntentClassifier} and
+ *       {@link QuestionGeneratorTool}; runs on every message so cost and latency matter.</li>
  * </ul>
  */
 @Configuration
@@ -92,13 +94,11 @@ public class LangChainConfig {
     }
 
     /**
-     * AiServices-backed {@link PlannerAgent} using both the blocking and streaming models.
-     * Each unique {@code @MemoryId} (session ID string) gets its own
-     * {@link MessageWindowChatMemory} with a {@value #MEMORY_WINDOW_SIZE}-message sliding window,
-     * so multi-turn sessions remain coherent without unbounded memory growth.
+     * AiServices-backed {@link PlannerAgent} for all non-DSA intents.
+     * Each unique {@code @MemoryId} (session ID) gets its own sliding
+     * {@link MessageWindowChatMemory} with {@value #MEMORY_WINDOW_SIZE} messages.
      *
-     * <p>Note: memory is in-process only. A server restart clears all session histories.
-     * Persistent memory backed by Redis is planned for a later sprint.
+     * <p>Memory is in-process only; a restart clears session histories.
      */
     @Bean
     public PlannerAgent plannerAgent(ChatModel chatModel, StreamingChatModel streamingChatModel) {
@@ -107,6 +107,31 @@ public class LangChainConfig {
                 .streamingChatModel(streamingChatModel)
                 .chatMemoryProvider(
                         memoryId -> MessageWindowChatMemory.withMaxMessages(MEMORY_WINDOW_SIZE))
+                .build();
+    }
+
+    /**
+     * AiServices-backed {@link DsaAgent} equipped with the three DSA specialist tools.
+     *
+     * <p>LangChain4J introspects each tool object for {@code @Tool}-annotated methods and
+     * registers them as callable functions the model can invoke mid-conversation.
+     * The same {@link MessageWindowChatMemory} window is used as for the planner,
+     * keeping per-session context coherent across DSA and non-DSA turns when the user
+     * switches topics within a session.
+     */
+    @Bean
+    public DsaAgent dsaAgent(
+            ChatModel chatModel,
+            StreamingChatModel streamingChatModel,
+            NoteSearchTool noteSearchTool,
+            QuestionGeneratorTool questionGeneratorTool,
+            CodeRunnerTool codeRunnerTool) {
+        return AiServices.builder(DsaAgent.class)
+                .chatModel(chatModel)
+                .streamingChatModel(streamingChatModel)
+                .chatMemoryProvider(
+                        memoryId -> MessageWindowChatMemory.withMaxMessages(MEMORY_WINDOW_SIZE))
+                .tools(noteSearchTool, questionGeneratorTool, codeRunnerTool)
                 .build();
     }
 }

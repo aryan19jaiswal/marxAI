@@ -11,6 +11,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.marxAI.agent.DsaAgent;
 import com.marxAI.agent.IntentClassifier;
 import com.marxAI.agent.PlannerAgent;
 import com.marxAI.exception.SessionNotFoundException;
@@ -46,6 +47,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
  *   <li>Intent classification is always delegated to {@link IntentClassifier}.</li>
  *   <li>RAG context is correctly scoped via {@link DocumentType} for domain-specific intents.</li>
  *   <li>RAG context is injected into the prompt only when chunks are present.</li>
+ *   <li>DSA intent is routed to {@link com.marxAI.agent.DsaAgent}; all others to {@link PlannerAgent}.</li>
  *   <li>Both user and assistant turns are persisted to the conversations table.</li>
  *   <li>The correct {@link ChatResponse} fields are returned.</li>
  * </ul>
@@ -55,6 +57,7 @@ class ChatServiceTest {
 
     @Mock private IntentClassifier intentClassifier;
     @Mock private PlannerAgent plannerAgent;
+    @Mock private DsaAgent dsaAgent;
     @Mock private RetrievalService retrievalService;
     @Mock private SessionRepository sessionRepository;
     @Mock private ConversationRepository conversationRepository;
@@ -70,6 +73,7 @@ class ChatServiceTest {
         chatService = new ChatService(
                 intentClassifier,
                 plannerAgent,
+                dsaAgent,
                 retrievalService,
                 sessionRepository,
                 conversationRepository,
@@ -158,6 +162,49 @@ class ChatServiceTest {
         verify(retrievalService, never()).retrieve(anyString(), any(DocumentType.class));
     }
 
+    // ---------------------------------------------------------------------------
+    // Agent routing — DSA → DsaAgent, everything else → PlannerAgent
+    // ---------------------------------------------------------------------------
+
+    @Test
+    void chat_dsaIntent_routesToDsaAgent() {
+        ChatRequest request = new ChatRequest(null, "explain BFS");
+        stubNewSessionCreation();
+        stubChatFlow(request.message(), intentResult(AgentIntent.DSA, "BFS"),
+                AssembledContext.empty(), "BFS uses a queue...");
+
+        chatService.chat(USER_ID, request);
+
+        verify(dsaAgent).chat(anyString(), anyString());
+        verify(plannerAgent, never()).chat(anyString(), anyString());
+    }
+
+    @Test
+    void chat_systemDesignIntent_routesToPlannerAgent() {
+        ChatRequest request = new ChatRequest(null, "design a URL shortener");
+        stubNewSessionCreation();
+        stubChatFlow(request.message(), intentResult(AgentIntent.SYSTEM_DESIGN, "URL shortener"),
+                AssembledContext.empty(), "Here is a design...");
+
+        chatService.chat(USER_ID, request);
+
+        verify(plannerAgent).chat(anyString(), anyString());
+        verify(dsaAgent, never()).chat(anyString(), anyString());
+    }
+
+    @Test
+    void chat_generalIntent_routesToPlannerAgent() {
+        ChatRequest request = new ChatRequest(null, "hello");
+        stubNewSessionCreation();
+        stubChatFlow(request.message(), intentResult(AgentIntent.GENERAL, "greeting"),
+                AssembledContext.empty(), "Hi there!");
+
+        chatService.chat(USER_ID, request);
+
+        verify(plannerAgent).chat(anyString(), anyString());
+        verify(dsaAgent, never()).chat(anyString(), anyString());
+    }
+
     @Test
     void chat_mockInterviewIntent_usesUnscopedRetrieval() {
         ChatRequest request = new ChatRequest(null, "start a mock interview");
@@ -186,8 +233,9 @@ class ChatServiceTest {
 
         chatService.chat(USER_ID, request);
 
+        // DSA intent routes to dsaAgent — verify the enriched prompt was forwarded there
         ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
-        verify(plannerAgent).chat(anyString(), messageCaptor.capture());
+        verify(dsaAgent).chat(anyString(), messageCaptor.capture());
         String prompt = messageCaptor.getValue();
         assertThat(prompt).startsWith("[CONTEXT FROM YOUR NOTES]\n");
         assertThat(prompt).contains(contextText);
@@ -203,8 +251,9 @@ class ChatServiceTest {
 
         chatService.chat(USER_ID, request);
 
+        // DSA intent with no RAG context — message passed through to dsaAgent unchanged
         ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
-        verify(plannerAgent).chat(anyString(), messageCaptor.capture());
+        verify(dsaAgent).chat(anyString(), messageCaptor.capture());
         assertThat(messageCaptor.getValue()).isEqualTo("what is recursion?");
     }
 
@@ -242,7 +291,8 @@ class ChatServiceTest {
         when(sessionRepository.save(any())).thenReturn(newSession);
         when(intentClassifier.classify(request.message())).thenReturn(intent);
         when(retrievalService.retrieve(request.message(), DocumentType.DSA)).thenReturn(context);
-        when(plannerAgent.chat(anyString(), anyString())).thenReturn(agentReply);
+        // DSA intent → dsaAgent handles the call
+        when(dsaAgent.chat(anyString(), anyString())).thenReturn(agentReply);
         when(conversationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
 
         ChatResponse response = chatService.chat(USER_ID, request);
@@ -288,7 +338,8 @@ class ChatServiceTest {
     }
 
     /**
-     * Stubs only the core chat flow stubs (intent, RAG, planner, conversation).
+     * Stubs only the core chat flow stubs (intent, RAG, agent, conversation).
+     * Routes DSA intent to {@code dsaAgent}, all others to {@code plannerAgent}.
      * Use when the session already exists — do NOT call this with session-creation stubs
      * on the same test to avoid UnnecessaryStubbingException.
      */
@@ -304,7 +355,11 @@ class ChatServiceTest {
         } else {
             when(retrievalService.retrieve(message)).thenReturn(context);
         }
-        when(plannerAgent.chat(anyString(), anyString())).thenReturn(agentReply);
+        if (intent.intent() == AgentIntent.DSA) {
+            when(dsaAgent.chat(anyString(), anyString())).thenReturn(agentReply);
+        } else {
+            when(plannerAgent.chat(anyString(), anyString())).thenReturn(agentReply);
+        }
         when(conversationRepository.save(any())).thenAnswer(inv -> inv.getArgument(0));
     }
 
